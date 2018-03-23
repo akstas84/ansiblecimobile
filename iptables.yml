@@ -1,0 +1,11 @@
+---
+
+- name: stop ipatbles and disable
+  hosts: webservers
+
+  tasks:
+  - name: stop iptables
+    service: name=iptables state=stopped
+
+  - name: disbale on iptable on boot
+    service: name=iptables enabled=no

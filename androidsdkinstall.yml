@@ -1,0 +1,60 @@
+---
+
+- name: install android-sdk-linux
+
+  hosts: devservers
+
+  tasks:
+    - name: Install packages to install android sdk
+      yum: name={{ item }} state=installed
+      with_items:
+        - glibc.i686
+        # - libstdc++.i686
+        - libstdc++-static
+        - glibc-devel.i686
+        - zlib.i686
+        - zlib-devel.i686
+        - ncurses-devel.i686
+        - libX11-devel.i686
+        - libXrender.i686
+        - ld-linux.so.2
+
+    - name: Download sdk tools
+      get_url: >
+          url=http://dl.google.com/android/android-sdk_r24.2-linux.tgz
+          dest=/opt/android-sdk_r24.2-linux.tar.gz
+      register: sdk_file
+
+    # - name: Unarchive sdk tools
+    #   command: >
+    #     tar zxf {{ sdk_file.dest }}
+    #     creates=/opt/android-sdk-linux
+    #     chdir=/opt
+    - name: Unarchive android-sdk_r24.2-linux.tgz into /opt
+      unarchive:
+        src: android-sdk_r24.2-linux.tgz
+        dest: /opt
+
+
+    - name: Set envs for android sdk
+      copy: >
+        src=android.sh
+        dest=/etc/profile.d/android.sh   
+
+    - name: Install Android SDKs
+      shell: echo y | android update sdk -u -a -t "{{ item }}" 
+      with_items:
+        - tools
+        - platform-tools
+        - build-tools-19.1.0
+        - android-26
+        - android-19
+        - extra-android-support
+
+##########################################
+# - name: Install Java
+#   yum: name={{ item }} state=installed
+#   with_items:
+#     - java-1.7.0-openjdk
+#     - java-1.7.0-openjdk-devel
+##########################################
