@@ -1,3 +1,0 @@
-    # base_path: /u01/jenkins
-    # api_ver: 25 
-    # system-images: system-images;android-{{ api_ver }};google_apis;x86_64

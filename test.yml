@@ -1,6 +1,0 @@
- - hosts: local
-   vars:
-    version: "{{fak}}"
-   tasks:
-    -name: "jope"
-    shell: echo {{version}}

@@ -12,38 +12,39 @@
 
   tasks:
 
-    # - name: "Install Repo Epel"
-    #   yum: state=present name={{ item }}
-    #   with_items:
-    #     - epel-release  
+    - name: "Install Repo Epel"
+      yum: state=present name={{ item }}
+      with_items:
+        - epel-release  
 
-    # - name: "Install Packages"
-    #   yum: state=present name={{ item }}
-    #   with_items:
-    #     - wget
-    #     - unzip
-    #     - htop
-    #     - mlocate  
+    - name: "Install Packages"
+      yum: state=present name={{ item }}
+      with_items:
+        - wget
+        - unzip
+        - htop
+        - mlocate  
 
-    # - name: "Install Libraries"
-    #   yum: name={{ item }} state=installed
-    #   with_items:
-    #     - glibc.i686
-    #     - libstdc++-static
-    #     - glibc-devel.i686
-    #     - zlib.i686
-    #     - zlib-devel.i686
-    #     - ncurses-devel.i686
-    #     - libX11-devel.i686
-    #     - libXrender.i686
-    #     - ld-linux.so.2
-    #     - mesa-libGL-devel
-    #     - libpulse.so.0  
+    - name: "Install Libraries"
+      yum: name={{ item }} state=installed
+      with_items:
+        - glibc.i686
+        - libstdc++-static
+        - glibc-devel.i686
+        - zlib.i686
+        - zlib-devel.i686
+        - ncurses-devel.i686
+        - libX11-devel.i686
+        - libXrender.i686
+        - ld-linux.so.2
+        - mesa-libGL-devel
+        - libpulse.so.0  
 
-    # - name: Download SDK Tools
-    #   get_url: >
-    #       url=https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
-    #       dest=/u01/android-sdk.zip
+
+    - name: Download SDK Tools
+      get_url: >
+          url=https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
+          dest=/u01/android-sdk.zip
 
 
     - name: "Create Dir SDK"
@@ -75,7 +76,6 @@
     - name: "Accept Android SDK Licenses" 
       shell: yes | /u01/android-sdk/tools/bin/sdkmanager --licenses
 
-
     - name: "Install Android SDK Components"
       shell: /u01/android-sdk/tools/bin/sdkmanager {{item}}
       with_items:
@@ -84,12 +84,6 @@
         - '"build-tools;27.0.3"'
         - '"platforms;android-25"' 
         - '"system-images;android-25;google_apis;x86_64"'
-
-
-
-
-
-
 
 
     # name:  Create AVD
