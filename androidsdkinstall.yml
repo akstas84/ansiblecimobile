@@ -1,18 +1,31 @@
 ---
 
-#- name: install android-sdk-linux
+- name: install android-sdk-linux
 
-- hosts: devservers 
-  vars:
-  - base_path: /u01/jenkins
-  - api_ver: 25 
-  - system-images: system-images;android-{{ api_ver }};google_apis;x86_64  
+  hosts: devservers 
+  #   vars:
+  # - base_path: /u01/jenkins
+  # - api_ver: 25 
+  # - system-images: system-images;android-25 ;google_apis;x86_64
 
   gather_facts: False
 
-
   tasks:
-    # - name: Install packages to install android sdk
+
+    # - name: "Install Repo Epel"
+    #   yum: state=present name={{ item }}
+    #   with_items:
+    #     - epel-release  
+
+    # - name: "Install Packages"
+    #   yum: state=present name={{ item }}
+    #   with_items:
+    #     - wget
+    #     - unzip
+    #     - htop
+    #     - mlocate  
+
+    # - name: "Install Libraries"
     #   yum: name={{ item }} state=installed
     #   with_items:
     #     - glibc.i686
@@ -24,135 +37,67 @@
     #     - libX11-devel.i686
     #     - libXrender.i686
     #     - ld-linux.so.2
-    #       sudo yum install mesa-libGL-devel
-    #       sudo yum install libpulse.so.0
+    #     - mesa-libGL-devel
+    #     - libpulse.so.0  
+
+    # - name: Download SDK Tools
+    #   get_url: >
+    #       url=https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
+    #       dest=/u01/android-sdk.zip
 
 
-    #          sudo cp -a $ANDROID_HOME/emulator/lib64/qt/lib/. /usr/lib64/   !!!!!!!!!!!!!!
-
-
-    # - name: Install Java
-    #   yum: name={{ item }} state=installed
-    #   with_items:
-    #     - java-1.8.0-openjdk
-    #     - java-1.8.0-openjdk-devel
-  
-
-    - name: Download sdk tools
-      get_url: >
-          url=https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
-          dest={{ base_path }}/android-sdk.zip
-
-    - name: Create Dir
+    - name: "Create Dir SDK"
       file:
-        path: "{{ base_path }}/android-sdk/"
+        path: "/u01/android-sdk/"
         state: directory
 
-    - name: Unarchive sdk                                
+    - name: "Unarchive SDK Tools"                             
       unarchive: 
         remote_src: yes
-        src: "{{ base_path }}/android-sdk.zip"
-        dest: "{{ base_path }}/android-sdk/"
-        #creates: {{ base_path }}/android-sdk/
+        src: "/u01/android-sdk.zip"
+        dest: "/u01/android-sdk/"
 
-    - name: Mode File
+    - name: "Mode Chmod SDK Directory"
       file:
-        path: "{{ base_path }}/android-sdk/"
-        # owner: akstas84
-        # group: akstas84
+        path: "/u01/android-sdk/"
         mode: 0755
         recurse: yes
 
+    - name: "Set SDK Environment Path"
+      action: lineinfile dest=~/.bashrc line="{{ item }}"
+      with_items:
+        - 'export ANDROID_HOME=/u01/android-sdk/'
+        - 'export ANDROID_TOOLS=$ANDROID_HOME/tools/'
+        - 'export ANDROID_PLATFORM_TOOLS=$ANDROID_HOME/platform-tools/'
+        - 'export PATH=$PATH:$ANDROID_TOOLS:$ANDROID_PLATFORM_TOOLS'
 
-    # - name: Set envs for android sdk
-    #   copy: >
-    #     src=envsdk.sh
-    #     dest=/etc/profile.d/envsdk.sh  
 
-###################################################
-    - name: Accept Android SDK licenses 
-      shell: yes | {{ base_path }}/android-sdk/tools/bin/sdkmanager --licenses
+    - name: "Accept Android SDK Licenses" 
+      shell: yes | /u01/android-sdk/tools/bin/sdkmanager --licenses
 
-    - name: Install Android SDK Components
-      shell: "{{ base_path }}/android-sdk/tools/bin/sdkmanager \"{{item}}\""
-    #   #shell: (while sleep 3; do echo "y"; done) | /home/android-sdk-linux/tools/android update sdk -a --no-ui --filter {{item}}
+
+    - name: "Install Android SDK Components"
+      shell: /u01/android-sdk/tools/bin/sdkmanager {{item}}
       with_items:
         - tools
         - platform-tools
-        - build-tools;27.0.3
-        - platforms;android-{{ api_ver }}
-        - "{{ system-images }}"
-
-    - name: Create AVD
-      shell: "{{ base_path }}/android-sdk/tools/bin/avdmanager create avd -n android-25 -k \"{{ system-images }}\" "
-    #   #shell: (while sleep 3; do echo "y"; done) | /home/android-sdk-linux/tools/android update sdk -a --no-ui --filter {{item}}
-      
-    # - debug:
-    #     var: shell_result.stdout_lines  
-    #     #- android-23
-    #     # - extra-bin/{{ base_path }}/android-sdk/bin/id-support
-    #     # - extra-google-m2repository
-    #     # - sys-img-x86_64-android-23
-        
-###################################################
-
-
-    # - name: Install Android SDK Components 24
-    #   #shell: echo y | /home/android-sdk-linux/tools/android update sdk -a --no-ui --filter {{item}}
-    #   #shell: ( while [ 1 ]; do sleep 5; echo y; done ) | sudo /home/android-sdk-linux/tools/android update sdk --all --no-ui -t {{item}}
-    #   shell: (while sleep 3; do echo "y"; done) | /home/android-sdk-linux/tools/android update sdk -a --no-ui --filter {{item}}
-    #   with_items:
-    #     - tools
-    #     - platform-tool
-    #     - build-tools
-
-    # - name: Install Android SDK Components 25-27
-    #   #shell: echo y | /home/android-sdk-linux/tools/android update sdk -a --no-ui --filter {{item}}
-    #   #shell: ( while [ 1 ]; do sleep 5; echo y; done ) | sudo /home/android-sdk-linux/tools/android update sdk --all --no-ui -t {{item}}
-    #   shell: (while sleep 3; do echo "y"; done) | /home/android-sdk-linux/tools/android update sdk -a --no-ui --filter {{item}}
-    #   with_items:
-    #     - tools
-    #     - platform-tool
-    #     - build-tools        
-
-
-        # - extra-google-google_play_services
-        # - extra-android-m2repository
-
-# sudo ./android update sdk --all --no-ui -t 
-# tools
-# platform-tool
-# build-tools-23.0.1
-# android-23
-# extra-android-support
-# extra-android-m2repository
-# sys-img-x86-android-23
-# sys-img-x86_64-android-23
+        - '"build-tools;27.0.3"'
+        - '"platforms;android-25"' 
+        - '"system-images;android-25;google_apis;x86_64"'
 
 
 
-    # - name: Install Android SDKs
-    #   shell: echo y | android update sdk -u -a -t "{{ item }}" 
-    #   with_items:
-# sudo ./android update sdk --all --no-ui -t 
-         # - tools,
-         # - platform-tool,
-         # - build-tools-23.0.1,
-         # - android-23,
-         # - extra-android-support,
-         # - extra-android-m2repository,
-         # - sys-img-x86-android-23,
-         # - sys-img-x86_64-android-23
 
-        # - tools
-        # - platform-tools
-        # - build-tools--27.0.3
-         # - android-23
-         # - sys-img-x86_64-android-23
-         # - sys-img-x86-android-24
-         # - extra-google-m2repository
-         # - extra-android-support
-         # - extra-android-supportsys
-         # - extra-android-m2repository
+
+
+
+
+    # name:  Create AVD
+    #      shell: "/u01/android-sdk/tools/bin/avdmanager create avd -n android-25 -k \"{{ system-images }}\" "
+   
+
+    #   sudo cp -a $ANDROID_HOME/emulator/lib64/qt/lib/. /usr/lib64/   !!!!!!!!!!!!!!
+
+
 
 

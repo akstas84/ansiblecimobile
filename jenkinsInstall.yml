@@ -20,9 +20,6 @@
         - java-1.8.0-openjdk
         - java-1.8.0-openjdk-devel  
 
-    # - name: install java
-    #   yum: name=java state=present
-
     - name: add repo
       get_url: url=http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
 
@@ -34,3 +31,28 @@
 
     - name: start jenkins service
       service: name=jenkins state=started enabled=yes
+
+
+
+########################################################
+
+      # Initial script off
+        # /var/lib/jenkins/secrets/initialAdminPassword
+
+      # Getting Started Auto Plugin Install 
+        # Ant Plugin
+        # Build Timeout
+        # Email Extension Plugin
+        # GitHub Branch Source Plugin
+        # Gradle Plugin
+        # LDAP Plugin
+        # Matrix Authorization Strategy Plugin
+        # OWASP Markup Formatter Plugin
+        # PAM Authentication plugin
+        # Pipeline
+        # Pipeline GitHub Groovy Libraries
+        # SSH Slaves plugin
+        # Subversion Plug-in
+        # Timestamper
+        # Workspace Cleanup Plugin
+
