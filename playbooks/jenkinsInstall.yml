@@ -32,29 +32,3 @@
     - name: start jenkins service
       service: name=jenkins state=started enabled=yes
 
-
-
-########################################################
-
-      # Initial script off
-        # /var/lib/jenkins/secrets/initialAdminPassword
-
-      # Getting Started Auto Plugin Install 
-        # Ant Plugin
-        # Build Timeout
-        # Email Extension Plugin
-        # GitHub Branch Source Plugin
-        # Gradle Plugin
-        # LDAP Plugin
-        # Matrix Authorization Strategy Plugin
-        # OWASP Markup Formatter Plugin
-        # PAM Authentication plugin
-        # Pipeline
-        # Pipeline GitHub Groovy Libraries
-        # SSH Slaves plugin
-        # Subversion Plug-in
-        # Timestamper
-        # Workspace Cleanup Plugin
-
-        # Android Emulator
-

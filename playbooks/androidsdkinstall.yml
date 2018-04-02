@@ -8,100 +8,89 @@
 
   tasks:
 
-    # - name: "Install Repo Epel"
-    #   yum: state=present name={{ item }}
-    #   with_items:
-    #     - epel-release  
+    - name: "Install Repo Epel"
+      yum: state=present name={{ item }}
+      with_items:
+        - epel-release  
 
-    # - name: "Install Packages"
-    #   yum: state=present name={{ item }}
-    #   with_items:
-    #     - wget
-    #     - unzip
-    #     - htop
-    #     - mlocate  
+    - name: "Install Packages"
+      yum: state=present name={{ item }}
+      with_items:
+        - wget
+        - unzip
+        - htop
+        - mlocate  
 
-    # - name: "Install Libraries"
-    #   yum: name={{ item }} state=installed
-    #   with_items:
-    #     - glibc.i686
-    #     - libstdc++-static
-    #     - glibc-devel.i686
-    #     - zlib.i686
-    #     - zlib-devel.i686
-    #     - ncurses-devel.i686
-    #     - libX11-devel.i686
-    #     - libXrender.i686
-    #     - ld-linux.so.2
-    #     - mesa-libGL-devel
-    #     - libpulse.so.0  
-
-
-    # - name: Download SDK Tools
-    #   get_url: >
-    #       url=https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
-    #       dest=/u01/android-sdk.zip
+    - name: "Install Libraries"
+      yum: name={{ item }} state=installed
+      with_items:
+        - glibc.i686
+        - libstdc++-static
+        - glibc-devel.i686
+        - zlib.i686
+        - zlib-devel.i686
+        - ncurses-devel.i686
+        - libX11-devel.i686
+        - libXrender.i686
+        - ld-linux.so.2
+        - mesa-libGL-devel
+        - libpulse.so.0  
 
 
-    # - name: "Create Dir SDK"
-    #   file:
-    #     path: "/u01/android-sdk/"
-    #     state: directory
-
-    # - name: "Unarchive SDK Tools"                             
-    #   unarchive: 
-    #     remote_src: yes
-    #     src: "/u01/android-sdk.zip"
-    #     dest: "/u01/android-sdk/"
-
-    # - name: "Mode Chmod SDK Directory"
-    #   file:
-    #     path: "/u01/android-sdk/"
-    #     mode: 0755
-    #     recurse: yes
-
-    # - name: "Set SDK Environment Path"
-    #   action: lineinfile dest=~/.bashrc line="{{ item }}"
-    #   with_items:
-    #     - 'export ANDROID_HOME=/u01/android-sdk/'
-    #     - 'export ANDROID_TOOLS=$ANDROID_HOME/tools/'
-    #     - 'export ANDROID_PLATFORM_TOOLS=$ANDROID_HOME/platform-tools/'
-    #     - 'export PATH=$PATH:$ANDROID_TOOLS:$ANDROID_PLATFORM_TOOLS'
-    #     - 'export DYLD_LIBRARY_PATH=$ANDROID_HOME/emulator/lib64:$ANDROID_HOME/emulator/lib64/qt/lib'
-    #     - 'export ANDROID_NDK=$ANDROID_HOME/ndk-bundle'
+    - name: Download SDK Tools
+      get_url: >
+          url=https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
+          dest=/u01/android-sdk.zip
 
 
-    # - name: "Accept Android SDK Licenses" 
-    #   shell: yes | /u01/android-sdk/tools/bin/sdkmanager --licenses
+    - name: "Create Dir SDK"
+      file:
+        path: "/u01/android-sdk/"
+        state: directory
+
+    - name: "Unarchive SDK Tools"                             
+      unarchive: 
+        remote_src: yes
+        src: "/u01/android-sdk.zip"
+        dest: "/u01/android-sdk/"
+
+    - name: "Mode Chmod SDK Directory"
+      file:
+        path: "/u01/android-sdk/"
+        mode: 0755
+        recurse: yes
+
+    - name: "Set SDK Environment Path"
+      action: lineinfile dest=~/.bashrc line="{{ item }}"
+      with_items:
+        - 'export ANDROID_HOME=/u01/android-sdk/'
+        - 'export ANDROID_TOOLS=$ANDROID_HOME/tools/'
+        - 'export ANDROID_PLATFORM_TOOLS=$ANDROID_HOME/platform-tools/'
+        - 'export PATH=$PATH:$ANDROID_TOOLS:$ANDROID_PLATFORM_TOOLS'
+        - 'export DYLD_LIBRARY_PATH=$ANDROID_HOME/emulator/lib64:$ANDROID_HOME/emulator/lib64/qt/lib'
+        - 'export ANDROID_NDK=$ANDROID_HOME/ndk-bundle'
+
+
+    - name: "Accept Android SDK Licenses" 
+      shell: yes | /u01/android-sdk/tools/bin/sdkmanager --licenses
 
     - name: "Install Android SDK Components"
-      shell: /u01/android-sdk/tools/bin/sdkmanager {{item}}
+      shell: /u01/android-sdk/tools/bin/sdkmanager "{{item}}"
       with_items:
-        # - tools
-        # - platform-tools
-        # - '"build-tools;27.0.3"'
-         - '"build-tools;25.0.2"'
-        # - '"ndk-bundle"'
-        # - '"platforms;android-25"' 
-        # - '"system-images;android-25;google_apis;x86_64"'
+        - tools
+        - platform-tools
+        - ndk-bundle
+        - 'build-tools;27.0.3'
+        - 'build-tools;25.0.2'
+        - 'platforms;android-25' 
+        - 'system-images;android-25;google_apis;x86_64'
 
-    # - name:  "Create Android Virtual Device"
-    #   shell: "echo no | /u01/android-sdk/tools/bin/avdmanager create avd --force --name MobileForWeather --abi google_apis/x86_64 --package \"system-images;android-25;google_apis;x86_64\""
-    #   register: output
-    #   args:
-    #   executable: /bin/bash
-    #   chdir: /u01/android-sdk/tools/bin/
+    - name:  "Create Android Virtual Device"
+      shell: "echo no | /u01/android-sdk/tools/bin/avdmanager create avd --force --name MobileForWeather --abi google_apis/x86_64 --package \"system-images;android-25;google_apis;x86_64\""
 
    
-
-    #      libQt5Widgets.so.5    sudo cp -a $ANDROID_HOME/emulator/lib64/qt/lib/. /usr/lib64/   !!!!!!!!!!!!!!
-
-    
-    #      lib64OpenglRender.so  -gpu off 
-    #      emulator: ERROR: x86_64 emulation currently requires hardware acceleration!      - ------   yum install bridge-utils & qemu-kvm  AND 
-    #      Common emulator options
-    #      Reset emulator state at start-up  Help for feature: Common emulator options
-    #      Show emulator window
+    - name:  "add Lib"
+      shell: sudo cp -a $ANDROID_HOME/emulator/lib64/qt/lib/. /usr/lib64/
 
 
 

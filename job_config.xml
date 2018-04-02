@@ -1,0 +1,108 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.8.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/graviton57/Weather.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+sudo chmod -R 777 /var/lib/jenkins/workspace/ProjectInWeatherToAVD</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+if [ ! -f &quot;/var/lib/jenkins/workspace/ProjectInWeatherToAVD/api.gradle&quot; ]; then
+
+touch /var/lib/jenkins/workspace/ProjectInWeatherToAVD/api.gradle 
+
+cat &gt; /var/lib/jenkins/workspace/ProjectInWeatherToAVD/api.gradle &lt;&lt; EOF
+ext {
+BASE_WEATHER_URL = &quot;http://api.apixu.com/v1/&quot;; 
+BASE_GEONAME_URL= &quot;http://api.geonames.org/&quot;; 
+GEONAME_API_KEY= &quot;YOUR_USER_NAME&quot;; 
+WEATHER_API_KEY = &quot;YOUR_API_KEY&quot;; }
+
+EOF
+
+fi</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+cat &gt;&gt; /var/lib/jenkins/workspace/ProjectInWeatherToAVD/app/build.gradle &lt;&lt; EOF
+
+    android {
+        lintOptions {
+            abortOnError false
+            disable &apos;MissingTranslation&apos;, &apos;ExtraTranslation&apos;
+        }
+    }
+
+EOF
+</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+sudo sed -i &apos;/# org.gradle.jvmargs=-Xmx2048m/a org.gradle.jvmargs=-Xmx1536m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8&apos; /var/lib/jenkins/workspace/ProjectInWeatherToAVD/gradle.properties</command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.gradle.Gradle plugin="gradle@1.28">
+      <switches></switches>
+      <tasks>clean build</tasks>
+      <rootBuildScriptDir></rootBuildScriptDir>
+      <buildFile></buildFile>
+      <gradleName>(Default)</gradleName>
+      <useWrapper>true</useWrapper>
+      <makeExecutable>true</makeExecutable>
+      <useWorkspaceAsHome>false</useWorkspaceAsHome>
+      <wrapperLocation></wrapperLocation>
+      <passAllAsSystemProperties>false</passAllAsSystemProperties>
+      <projectProperties></projectProperties>
+      <passAllAsProjectProperties>false</passAllAsProjectProperties>
+    </hudson.plugins.gradle.Gradle>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <hudson.plugins.android__emulator.AndroidEmulator plugin="android-emulator@3.0">
+      <osVersion>7.1</osVersion>
+      <screenDensity>mdpi</screenDensity>
+      <screenResolution>WVGA</screenResolution>
+      <deviceLocale>en_US</deviceLocale>
+      <targetAbi>google_apis/x86_64</targetAbi>
+      <avdNameSuffix>MobileForWeather</avdNameSuffix>
+      <hardwareProperties/>
+      <wipeData>true</wipeData>
+      <showWindow>false</showWindow>
+      <useSnapshots>false</useSnapshots>
+      <deleteAfterBuild>false</deleteAfterBuild>
+      <startupDelay>0</startupDelay>
+      <startupTimeout>0</startupTimeout>
+      <commandLineOptions>-gpu off -no-audio</commandLineOptions>
+      <executable></executable>
+    </hudson.plugins.android__emulator.AndroidEmulator>
+  </buildWrappers>
+</project>
