@@ -43,22 +43,22 @@
     #     path: "/u01/android-sdk/"
     #     state: directory
 
-    - name: Download SDK Tools
-      get_url: >
-          url=https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
-          dest=/u01/android-sdk.zip
+    # - name: Download SDK Tools
+    #   get_url: >
+    #       url=https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
+    #       dest=/u01/android-sdk.zip
 
-    - name: "Unarchive SDK Tools"                             
-      unarchive: 
-        remote_src: yes
-        src: "/u01/android-sdk.zip"
-        dest: "/u01/android-sdk/"
+    # - name: "Unarchive SDK Tools"                             
+    #   unarchive: 
+    #     remote_src: yes
+    #     src: "/u01/android-sdk.zip"
+    #     dest: "/u01/android-sdk/"
 
-    - name: "Mode Chmod SDK Directory"
-      file:
-        path: "/u01/android-sdk/"
-        mode: 0755
-        recurse: yes
+    # - name: "Mode Chmod SDK Directory"
+    #   file:
+    #     path: "/u01/android-sdk/"
+    #     mode: 0755
+    #     recurse: yes
 
     # - name: "Set SDK Environment Path"
     #   action: lineinfile dest=~/.bashrc line="{{ item }}"
@@ -71,33 +71,33 @@
     #     - 'export ANDROID_NDK=$ANDROID_HOME/ndk-bundle'
 
 
-    - name: "Accept Android SDK Licenses" 
-      shell: yes | /u01/android-sdk/tools/bin/sdkmanager --licenses
+    # - name: "Accept Android SDK Licenses" 
+    #   shell: yes | /u01/android-sdk/tools/bin/sdkmanager --licenses
 
-    - name: "Install Android SDK Components"
-      shell: /u01/android-sdk/tools/bin/sdkmanager '{{item}}'
-      with_items:
-        - tools
-        - platform-tools
-        - ndk-bundle
-        - build-tools;25.0.2
-        - platforms;android-24
-        - system-images;android-24;google_apis;x86_64
+    # - name: "Install Android SDK Components"
+    #   shell: /u01/android-sdk/tools/bin/sdkmanager '{{item}}'
+    #   with_items:
+    #     - tools
+    #     - platform-tools
+    #     - ndk-bundle
+    #     - build-tools;25.0.2
+    #     - platforms;android-24
+    #     - system-images;android-24;google_apis;x86_64
 
     
     # - name:  "Create Android Virtual Device name android_24"  
     #   shell: "echo no | /u01/android-sdk/tools/bin/avdmanager create avd --force -n android_24 --abi google_apis/x86_64 -k 'system-images;android-24;google_apis;x86_64'"
    
-    - name:  "Create Android Virtual Device name MobileForWeather_24"
-      shell: "echo no | /u01/android-sdk/tools/bin/avdmanager create avd --force -n MobileForWeather_24 --abi google_apis/x86_64 --package \"system-images;android-24;google_apis;x86_64\""
+    # - name:  "Create Android Virtual Device name MobileForWeather_24"
+    #   shell: "echo no | /u01/android-sdk/tools/bin/avdmanager create avd --force -n MobileForWeather_24 --abi google_apis/x86_64 --package \"system-images;android-24;google_apis;x86_64\""
     
     # - name:  "Delete Android Virtual Device android_24"
     #   shell: "/u01/android-sdk/tools/bin/avdmanager delete avd -n android_24"
     # - name:  "Delete Android Virtual Device name MobileForWeather_24"
     #   shell: "/u01/android-sdk/tools/bin/avdmanager delete avd -n MobileForWeather_24"
     
-    - name:  "add Lib"
-      shell: sudo cp -a $ANDROID_HOME/emulator/lib64/qt/lib/. /usr/lib64/
+    # - name:  "add Lib"
+    #   shell: sudo cp -a $ANDROID_HOME/emulator/lib64/qt/lib/. /usr/lib64/
 
 
 

@@ -1,0 +1,68 @@
+---
+
+- name: clone package repo and gradle build 
+
+  hosts: devservers 
+
+  gather_facts: False
+
+  tasks:
+    - name: "Install Packages KVM"
+      yum: state=present name={{ item }}
+      with_items:
+         - kvm
+         - libvirt
+      
+    
+
+    # - name: "Create Dir SDK"
+    #   file:
+    #     path: "/u01/packages"
+    #     state: directory
+    
+    # - name: "Clone Git Repo" 
+    #   shell: git clone https://github.com/graviton57/Weather.git
+    #   args:
+    #     chdir: /u01/packages
+    
+    # - name: "Mode Chmod Gradlew" 
+    #   file:
+    #     path: "/u01/packages/Weather/gradlew"
+    #     mode: 0755
+
+    # - name: "Preparation for gradlew build Create api.gradle"
+    #   command: touch /u01/packages/Weather/api.gradle
+
+    # - name: "Preparation for gradlew build Copy api.gradle"
+    #   template: 
+    #     src: /etc/ansible/file/api.gradle 
+    #     dest: "/u01/packages/Weather/api.gradle"
+
+    # - name: "Preparation for gradlew build Copy build.gradle"
+    #   template: 
+    #     src: /etc/ansible/file/build.gradle 
+    #     dest: "/u01/packages/Weather/app/build.gradle"    
+
+    # - name: "Gradle Build"
+    #   shell: "/u01/packages/Weather/gradlew clean build"
+    #   args:
+    #     chdir: /u01/packages/Weather/
+    #   register: gradlew
+    # - debug: var=gradlew.stdout_lines
+
+    
+    - name: "Preparation for adb install Zipalign "
+      shell: "./zipalign -v 4 /u01/packages/Weather/app/build/outputs/apk/app-release-unsigned.apk /u01/packages/Weather/app/build/outputs/apk/app-release.apk"
+      args:
+        chdir: /u01/android-sdk/build-tools/25.0.2
+     
+    
+      keytool -genkey -v -keystore /u01/packages/Weather/app/build/outputs/apk/debug.keystore -alias sampleName -keyalg RSA -keysize 2048 -validity 20000
+      jarsigner -verbose -keystore /u01/packages/Weather/app/build/outputs/apk/debug.keystore /u01/packages/Weather/app/build/outputs/apk/app-release.apk sampleName
+
+
+      cd /home/u01/android/sdk/emulator
+      ./emulator64-x86 -verbose -avd MobileForWeather_24 -no-audio -gpu off -no-window
+
+      ./adb -e install /u01/packages/Weather/app/build/outputs/apk/app-release-unsigned.apk
+
