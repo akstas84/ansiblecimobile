@@ -8,45 +8,45 @@
 
   tasks:
 
-    - name: "Install Repo Epel"
-      yum: state=present name={{ item }}
-      with_items:
-        - epel-release  
+    # - name: "Install Repo Epel"
+    #   yum: state=present name={{ item }}
+    #   with_items:
+    #     - epel-release  
 
-    - name: "Install Packages"
-      yum: state=present name={{ item }}
-      with_items:
-        - wget
-        - unzip
-        - htop
-        - mlocate  
+    # - name: "Install Packages"
+    #   yum: state=present name={{ item }}
+    #   with_items:
+    #     - wget
+    #     - unzip
+    #     - htop
+    #     - mlocate  
+    #     - git
 
-    - name: "Install Libraries"
-      yum: name={{ item }} state=installed
-      with_items:
-        - glibc.i686
-        - libstdc++-static
-        - glibc-devel.i686
-        - zlib.i686
-        - zlib-devel.i686
-        - ncurses-devel.i686
-        - libX11-devel.i686
-        - libXrender.i686
-        - ld-linux.so.2
-        - mesa-libGL-devel
-        - libpulse.so.0  
+    # - name: "Install Libraries"
+    #   yum: name={{ item }} state=installed
+    #   with_items:
+    #     - glibc.i686
+    #     - libstdc++-static
+    #     - glibc-devel.i686
+    #     - zlib.i686
+    #     - zlib-devel.i686
+    #     - ncurses-devel.i686
+    #     - libX11-devel.i686
+    #     - libXrender.i686
+    #     - ld-linux.so.2
+    #     - mesa-libGL-devel
+    #     - libpulse.so.0
+        
 
+    # - name: "Create Dir SDK"
+    #   file:
+    #     path: "/u01/android-sdk/"
+    #     state: directory
 
     - name: Download SDK Tools
       get_url: >
           url=https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
           dest=/u01/android-sdk.zip
-
-
-    - name: "Create Dir SDK"
-      file:
-        path: "/u01/android-sdk/"
-        state: directory
 
     - name: "Unarchive SDK Tools"                             
       unarchive: 
@@ -60,35 +60,42 @@
         mode: 0755
         recurse: yes
 
-    - name: "Set SDK Environment Path"
-      action: lineinfile dest=~/.bashrc line="{{ item }}"
-      with_items:
-        - 'export ANDROID_HOME=/u01/android-sdk/'
-        - 'export ANDROID_TOOLS=$ANDROID_HOME/tools/'
-        - 'export ANDROID_PLATFORM_TOOLS=$ANDROID_HOME/platform-tools/'
-        - 'export PATH=$PATH:$ANDROID_TOOLS:$ANDROID_PLATFORM_TOOLS'
-        - 'export DYLD_LIBRARY_PATH=$ANDROID_HOME/emulator/lib64:$ANDROID_HOME/emulator/lib64/qt/lib'
-        - 'export ANDROID_NDK=$ANDROID_HOME/ndk-bundle'
+    # - name: "Set SDK Environment Path"
+    #   action: lineinfile dest=~/.bashrc line="{{ item }}"
+    #   with_items:
+    #     - 'export ANDROID_HOME=/u01/android-sdk/'
+    #     - 'export ANDROID_TOOLS=$ANDROID_HOME/tools/'
+    #     - 'export ANDROID_PLATFORM_TOOLS=$ANDROID_HOME/platform-tools/'
+    #     - 'export PATH=$PATH:$ANDROID_TOOLS:$ANDROID_PLATFORM_TOOLS'
+    #     - 'export LD_LIBRARY_PATH=$ANDROID_HOME/emulator/lib64:$ANDROID_HOME/emulator/lib64/qt/lib'
+    #     - 'export ANDROID_NDK=$ANDROID_HOME/ndk-bundle'
 
 
     - name: "Accept Android SDK Licenses" 
       shell: yes | /u01/android-sdk/tools/bin/sdkmanager --licenses
 
     - name: "Install Android SDK Components"
-      shell: /u01/android-sdk/tools/bin/sdkmanager "{{item}}"
+      shell: /u01/android-sdk/tools/bin/sdkmanager '{{item}}'
       with_items:
         - tools
         - platform-tools
         - ndk-bundle
-        - 'build-tools;27.0.3'
-        - 'build-tools;25.0.2'
-        - 'platforms;android-25' 
-        - 'system-images;android-25;google_apis;x86_64'
+        - build-tools;25.0.2
+        - platforms;android-24
+        - system-images;android-24;google_apis;x86_64
 
-    - name:  "Create Android Virtual Device"
-      shell: "echo no | /u01/android-sdk/tools/bin/avdmanager create avd --force --name MobileForWeather --abi google_apis/x86_64 --package \"system-images;android-25;google_apis;x86_64\""
-
+    
+    # - name:  "Create Android Virtual Device name android_24"  
+    #   shell: "echo no | /u01/android-sdk/tools/bin/avdmanager create avd --force -n android_24 --abi google_apis/x86_64 -k 'system-images;android-24;google_apis;x86_64'"
    
+    - name:  "Create Android Virtual Device name MobileForWeather_24"
+      shell: "echo no | /u01/android-sdk/tools/bin/avdmanager create avd --force -n MobileForWeather_24 --abi google_apis/x86_64 --package \"system-images;android-24;google_apis;x86_64\""
+    
+    # - name:  "Delete Android Virtual Device android_24"
+    #   shell: "/u01/android-sdk/tools/bin/avdmanager delete avd -n android_24"
+    # - name:  "Delete Android Virtual Device name MobileForWeather_24"
+    #   shell: "/u01/android-sdk/tools/bin/avdmanager delete avd -n MobileForWeather_24"
+    
     - name:  "add Lib"
       shell: sudo cp -a $ANDROID_HOME/emulator/lib64/qt/lib/. /usr/lib64/
 
