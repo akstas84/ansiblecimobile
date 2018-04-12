@@ -7,43 +7,43 @@
   gather_facts: False
 
   tasks:
-    # - name: "Install Packages KVM"
-    #   yum: state=present name={{ item }}
-    #   with_items:
-    #      - kvm
-    #      - libvirt
+    - name: "Install Packages KVM"
+      yum: state=present name={{ item }}
+      with_items:
+         - kvm
+         - libvirt
       
-    # - name: "Create Dir SDK"
-    #   file:
-    #     path: "/u01/packages"
-    #     state: directory
+    - name: "Create Dir SDK"
+      file:
+        path: "/u01/packages"
+        state: directory
     
-    # - name: "Clone Git Repo" 
-    #   shell: git clone https://github.com/graviton57/Weather.git
-    #   args:
-    #     chdir: /u01/packages
+    - name: "Clone Git Repo" 
+      shell: git clone https://github.com/graviton57/Weather.git
+      args:
+        chdir: /u01/packages
     
-    # - name: "Mode Chmod Gradlew" 
-    #   file:
-    #     path: "/u01/packages/Weather/gradlew"
-    #     mode: 0755
+    - name: "Mode Chmod Gradlew" 
+      file:
+        path: "/u01/packages/Weather/gradlew"
+        mode: 0755
 
-    # - name: "Preparation for gradlew build Copy api.gradle"
-    #   template: 
-    #     src: /etc/ansible/file/api.gradle 
-    #     dest: "/u01/packages/Weather/api.gradle"
+    - name: "Preparation for gradlew build Copy api.gradle"
+      template: 
+        src: /etc/ansible/file/api.gradle 
+        dest: "/u01/packages/Weather/api.gradle"
 
-    # - name: "Preparation for gradlew build Copy build.gradle"
-    #   template: 
-    #     src: /etc/ansible/file/build.gradle 
-    #     dest: "/u01/packages/Weather/app/build.gradle"    
+    - name: "Preparation for gradlew build Copy build.gradle"
+      template: 
+        src: /etc/ansible/file/build.gradle 
+        dest: "/u01/packages/Weather/app/build.gradle"    
 
-    # - name: "Gradlew Clean Build"
-    #   shell: "/u01/packages/Weather/gradlew clean build"
-    #   args:
-    #     chdir: /u01/packages/Weather/
-    #   register: gradlew
-    # - debug: var=gradlew.stdout_lines
+    - name: "Gradlew Clean Build"
+      shell: "/u01/packages/Weather/gradlew clean build"
+      args:
+        chdir: /u01/packages/Weather/
+      register: gradlew
+    - debug: var=gradlew.stdout_lines
 
     - name: "Start Emulator"
       shell: ((/u01/android-sdk/emulator/emulator64-x86 -verbose -avd MobileForWeather_24 -no-audio -gpu off -no-window </dev/null >/dev/null 2>&1) & )
